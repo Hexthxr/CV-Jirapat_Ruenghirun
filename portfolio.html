@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ชื่อ นามสกุล — Full-Stack Developer Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #12121c;
+    --surface: #1a1928;
+    --surface-2: #221f36;
+    --line: #2f2c47;
+    --text: #f1eefc;
+    --text-dim: #9691b8;
+    --coral: #ff6b6b;
+    --teal: #4ecdc4;
+    --gold: #ffd93d;
+    --purple: #a78bfa;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', 'Noto Sans Thai', sans-serif;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  body::before{
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(255,107,107,0.10), transparent 40%),
+      radial-gradient(circle at 85% 20%, rgba(78,205,196,0.10), transparent 40%),
+      radial-gradient(circle at 50% 90%, rgba(167,139,250,0.08), transparent 45%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  a{ color: inherit; text-decoration: none; }
+
+  :focus-visible{
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::selection{ background: var(--coral); color: #14121e; }
+
+  .wrap{ max-width: 980px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 1; }
+
+  /* ---------- Tab bar nav ---------- */
+  .tabbar-shell{
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(18,18,28,0.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .tabbar{
+    max-width: 980px; margin: 0 auto; padding: 0 20px;
+    display: flex; align-items: center; gap: 22px;
+    height: 52px;
+    overflow-x: auto;
+  }
+  .dots{ display:flex; gap:7px; flex-shrink:0; }
+  .dots span{ width:11px; height:11px; border-radius:50%; display:inline-block; }
+  .dots span:nth-child(1){ background: var(--coral); }
+  .dots span:nth-child(2){ background: var(--gold); }
+  .dots span:nth-child(3){ background: var(--teal); }
+
+  .tabs{ display:flex; gap: 2px; flex-shrink:0; }
+  .tab{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-dim);
+    padding: 8px 14px;
+    border-radius: 6px 6px 0 0;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color .2s ease, border-color .2s ease, background .2s ease;
+  }
+  .tab:hover{ color: var(--text); background: var(--surface); }
+  .tab.active{ color: var(--gold); border-color: var(--gold); background: var(--surface); }
+  .tab .dim{ color: var(--text-dim); }
+  .tab.active .dim{ color: var(--gold); opacity:.6; }
+
+  /* ---------- Hero / index.tsx ---------- */
+  .hero{ padding: 90px 0 70px; position: relative; z-index:1; }
+  .editor-window{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.5);
+  }
+  .editor-titlebar{
+    display:flex; align-items:center; gap:10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .editor-body{ display:flex; }
+  .gutter{
+    font-family: var(--mono);
+    font-size: 14px;
+    color: #4a4664;
+    text-align: right;
+    padding: 24px 14px;
+    user-select: none;
+    border-right: 1px solid var(--line);
+    line-height: 1.9;
+  }
+  .code{
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 24px 20px;
+    line-height: 1.9;
+    white-space: pre;
+    overflow-x: auto;
+    min-height: 1.9em;
+  }
+  .kw{ color: var(--purple); }
+  .fn{ color: var(--gold); }
+  .str{ color: var(--teal); }
+  .prop{ color: var(--coral); }
+  .cm{ color: #605c82; }
+  .caret{
+    display:inline-block; width:8px; height:1.1em; background: var(--gold);
+    vertical-align: text-bottom; margin-left:2px;
+    animation: blink 1s step-end infinite;
+  }
+  @media (prefers-reduced-motion: reduce){ .caret{ animation: none; } }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .hero-actions{ display:flex; gap:14px; margin-top: 28px; flex-wrap: wrap; }
+  .btn{
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 22px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: transform .15s ease, box-shadow .15s ease;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn:hover{ transform: translateY(-2px); }
+  .btn-solid{ background: var(--coral); color: #1a1220; box-shadow: 0 8px 20px -8px rgba(255,107,107,0.6); }
+  .btn-outline{ border-color: var(--line); color: var(--text); }
+  .btn-outline:hover{ border-color: var(--teal); color: var(--teal); }
+
+  .hero-tagline{ margin-top: 24px; color: var(--text-dim); font-size: 15px; max-width: 60ch; }
+
+  /* ---------- Section shell ---------- */
+  section.file{ padding: 80px 0; position: relative; z-index: 1; border-top: 1px solid var(--line); }
+  .file-header{
+    display:flex; align-items: baseline; gap: 12px; margin-bottom: 40px;
+  }
+  .file-header .idx{ font-family: var(--mono); color: var(--text-dim); font-size: 13px; }
+  .file-header h2{
+    font-family: var(--mono); font-size: 22px; font-weight: 700;
+    display:flex; align-items:center; gap: 10px;
+  }
+  .file-header h2::before{ content: attr(data-icon); }
+
+  /* ---------- About ---------- */
+  .terminal{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px 22px;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    color: var(--text-dim);
+    margin-bottom: 36px;
+  }
+  .terminal .prompt{ color: var(--teal); }
+  .terminal p{ margin-top: 10px; color: var(--text); font-family: var(--sans); font-size: 15.5px; line-height: 1.8; }
+
+  .imports{ display:flex; flex-direction: column; gap: 10px; }
+  .import-line{
+    font-family: var(--mono); font-size: 13.5px;
+    display:flex; flex-wrap: wrap; align-items:center; gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+  }
+  .import-line .kw{ color: var(--purple); }
+  .import-line .src{ color: var(--gold); }
+  .chip{
+    font-family: var(--mono); font-size: 12.5px;
+    padding: 3px 9px;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+  }
+  .chip.c-coral{ color: var(--coral); border-color: rgba(255,107,107,0.3); }
+  .chip.c-teal{ color: var(--teal); border-color: rgba(78,205,196,0.3); }
+  .chip.c-gold{ color: var(--gold); border-color: rgba(255,217,61,0.3); }
+
+  /* ---------- Projects ---------- */
+  .grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px;
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .card:hover{
+    transform: translateY(-4px);
+    border-color: var(--card-accent, var(--teal));
+    box-shadow: 0 20px 40px -20px var(--card-accent, var(--teal));
+  }
+  .card-top{ display:flex; align-items:center; justify-content: space-between; margin-bottom: 12px; }
+  .lang-dot{ width:10px; height:10px; border-radius:50%; background: var(--card-accent, var(--teal)); flex-shrink:0; }
+  .card-title{ font-family: var(--mono); font-size: 16px; font-weight: 700; display:flex; align-items:center; gap:8px; }
+  .card-status{ font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+  .card p{ color: var(--text-dim); font-size: 14px; margin-bottom: 16px; min-height: 3.2em; }
+  .card-tags{ display:flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .card-links{ display:flex; gap: 16px; font-family: var(--mono); font-size: 13px; }
+  .card-links a{ color: var(--text-dim); border-bottom: 1px solid transparent; transition: color .15s ease, border-color .15s ease; }
+  .card-links a:hover{ color: var(--card-accent, var(--teal)); border-color: var(--card-accent, var(--teal)); }
+
+  /* ---------- Contact ---------- */
+  .contact-box{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 32px;
+  }
+  .contact-box .prompt-line{ font-family: var(--mono); color: var(--teal); font-size: 14px; margin-bottom: 18px; }
+  .contact-links{ display:flex; flex-direction: column; gap: 14px; }
+  .contact-links a{
+    display:flex; align-items:center; gap: 12px;
+    font-family: var(--mono); font-size: 15px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    transition: border-color .15s ease, background .15s ease, color .15s ease;
+  }
+  .contact-links a:hover{ border-color: var(--gold); color: var(--gold); background: rgba(255,217,61,0.05); }
+  .contact-links .key{ color: var(--purple); }
+
+  footer{
+    padding: 40px 0 60px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--text-dim);
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 720px){
+    .grid{ grid-template-columns: 1fr; }
+    .gutter{ padding: 20px 10px; font-size: 12.5px; }
+    .code{ font-size: 12.5px; padding: 20px 14px; }
+    .hero{ padding: 60px 0 50px; }
+    section.file{ padding: 56px 0; }
+    .file-header h2{ font-size: 19px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="tabbar-shell">
+  <nav class="tabbar" aria-label="ส่วนต่างๆ ของเว็บไซต์">
+    <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+    <div class="tabs">
+      <a href="#home" class="tab active" data-section="home"><span class="dim">~/</span>index.tsx</a>
+      <a href="#about" class="tab" data-section="about"><span class="dim">~/</span>about.tsx</a>
+      <a href="#projects" class="tab" data-section="projects"><span class="dim">~/</span>projects.tsx</a>
+      <a href="#contact" class="tab" data-section="contact"><span class="dim">~/</span>contact.tsx</a>
+    </div>
+  </nav>
+</div>
+
+<main class="wrap">
+
+  <!-- ================= HERO ================= -->
+  <section id="home" class="hero">
+    <div class="editor-window">
+      <div class="editor-titlebar">index.tsx — ready</div>
+      <div class="editor-body">
+        <div class="gutter" id="gutter"></div>
+        <div class="code" id="typedCode" aria-label="const developer = { name: 'ชื่อ นามสกุล', role: 'Full-Stack Developer', location: 'Bangkok, Thailand', stack: React, Node.js, TypeScript, Python, status: available_for_hire }"></div>
+      </div>
+    </div>
+
+    <p class="hero-tagline">
+      // แก้ไขชื่อ ตำแหน่ง และ stack ด้านบนให้เป็นข้อมูลของคุณ แล้วเลื่อนลงไปดูโครงสร้างส่วนอื่นๆ ที่เตรียมไว้ให้
+    </p>
+
+    <div class="hero-actions">
+      <a href="#projects" class="btn btn-solid">ดูผลงานทั้งหมด →</a>
+      <a href="#contact" class="btn btn-outline">ติดต่อฉัน</a>
+    </div>
+  </section>
+
+  <!-- ================= ABOUT ================= -->
+  <section id="about" class="file">
+    <div class="file-header" data-icon="📄">
+      <span class="idx">02</span>
+      <h2>about.tsx</h2>
+    </div>
+
+    <div class="terminal">
+      <span class="prompt">$</span> cat about.md
+      <p>
+        [ใส่คำแนะนำตัวสั้นๆ ที่นี่ — เช่น พื้นฐานการทำงาน สายที่ถนัด ประเภทโปรเจกต์ที่สนใจ
+        และเป้าหมายในการสมัครงานครั้งนี้ แนะนำให้เขียนสัก 3-4 ประโยค กระชับ อ่านง่าย]
+      </p>
+    </div>
+
+    <div class="imports">
+      <div class="import-line">
+        <span class="kw">import</span> { <span class="chip c-coral">JavaScript</span> <span class="chip c-coral">TypeScript</span> <span class="chip c-coral">Python</span> } <span class="kw">from</span> <span class="src">'languages'</span>
+      </div>
+      <div class="import-line">
+        <span class="kw">import</span> { <span class="chip c-teal">React</span> <span class="chip c-teal">Next.js</span> <span class="chip c-teal">Node.js</span> <span class="chip c-teal">Express</span> } <span class="kw">from</span> <span class="src">'frameworks'</span>
+      </div>
+      <div class="import-line">
+        <span class="kw">import</span> { <span class="chip c-gold">Git</span> <span class="chip c-gold">Docker</span> <span class="chip c-gold">AWS</span> <span class="chip c-gold">PostgreSQL</span> } <span class="kw">from</span> <span class="src">'tools'</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PROJECTS ================= -->
+  <section id="projects" class="file">
+    <div class="file-header" data-icon="📁">
+      <span class="idx">03</span>
+      <h2>projects.tsx</h2>
+    </div>
+
+    <div class="grid">
+
+      <div class="card" style="--card-accent:#ff6b6b">
+        <div class="card-top">
+          <div class="card-title"><span class="lang-dot"></span>[ชื่อโปรเจกต์ 1]</div>
+          <span class="card-status">public</span>
+        </div>
+        <p>[อธิบายสั้นๆ ว่าโปรเจกต์นี้ทำอะไร แก้ปัญหาอะไร และผลลัพธ์ที่ได้ 1-2 ประโยค]</p>
+        <div class="card-tags">
+          <span class="chip c-coral">React</span><span class="chip c-coral">Node.js</span><span class="chip c-coral">PostgreSQL</span>
+        </div>
+        <div class="card-links"><a href="#">Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+
+      <div class="card" style="--card-accent:#4ecdc4">
+        <div class="card-top">
+          <div class="card-title"><span class="lang-dot"></span>[ชื่อโปรเจกต์ 2]</div>
+          <span class="card-status">public</span>
+        </div>
+        <p>[อธิบายสั้นๆ ว่าโปรเจกต์นี้ทำอะไร แก้ปัญหาอะไร และผลลัพธ์ที่ได้ 1-2 ประโยค]</p>
+        <div class="card-tags">
+          <span class="chip c-teal">Next.js</span><span class="chip c-teal">TypeScript</span><span class="chip c-teal">Tailwind</span>
+        </div>
+        <div class="card-links"><a href="#">Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+
+      <div class="card" style="--card-accent:#ffd93d">
+        <div class="card-top">
+          <div class="card-title"><span class="lang-dot"></span>[ชื่อโปรเจกต์ 3]</div>
+          <span class="card-status">private</span>
+        </div>
+        <p>[อธิบายสั้นๆ ว่าโปรเจกต์นี้ทำอะไร แก้ปัญหาอะไร และผลลัพธ์ที่ได้ 1-2 ประโยค]</p>
+        <div class="card-tags">
+          <span class="chip c-gold">Python</span><span class="chip c-gold">FastAPI</span><span class="chip c-gold">Docker</span>
+        </div>
+        <div class="card-links"><a href="#">Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+
+      <div class="card" style="--card-accent:#a78bfa">
+        <div class="card-top">
+          <div class="card-title"><span class="lang-dot"></span>[ชื่อโปรเจกต์ 4]</div>
+          <span class="card-status">public</span>
+        </div>
+        <p>[อธิบายสั้นๆ ว่าโปรเจกต์นี้ทำอะไร แก้ปัญหาอะไร และผลลัพธ์ที่ได้ 1-2 ประโยค]</p>
+        <div class="card-tags">
+          <span class="chip c-coral">Vue</span><span class="chip c-coral">Firebase</span>
+        </div>
+        <div class="card-links"><a href="#">Demo ↗</a><a href="#">GitHub ↗</a></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section id="contact" class="file">
+    <div class="file-header" data-icon="✉️">
+      <span class="idx">04</span>
+      <h2>contact.tsx</h2>
+    </div>
+
+    <div class="contact-box">
+      <div class="prompt-line">$ contact --list</div>
+      <div class="contact-links">
+        <a href="mailto:youremail@example.com"><span class="key">email</span> · youremail@example.com</a>
+        <a href="https://github.com/yourusername" target="_blank" rel="noopener"><span class="key">github</span> · github.com/yourusername</a>
+        <a href="https://linkedin.com/in/yourusername" target="_blank" rel="noopener"><span class="key">linkedin</span> · linkedin.com/in/yourusername</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  // built by [ชื่อ นามสกุล] · last commit: <span id="today"></span>
+</footer>
+
+<script>
+  // ---- Typing animation for hero code block ----
+  const lines = [
+    { n: 1, html: '<span class="kw">const</span> developer = {' },
+    { n: 2, html: '&nbsp;&nbsp;<span class="prop">name</span>: <span class="str">\'ชื่อ นามสกุล\'</span>,' },
+    { n: 3, html: '&nbsp;&nbsp;<span class="prop">role</span>: <span class="str">\'Full-Stack Developer\'</span>,' },
+    { n: 4, html: '&nbsp;&nbsp;<span class="prop">location</span>: <span class="str">\'Bangkok, Thailand\'</span>,' },
+    { n: 5, html: '&nbsp;&nbsp;<span class="prop">stack</span>: [<span class="str">\'React\'</span>, <span class="str">\'Node.js\'</span>, <span class="str">\'TypeScript\'</span>, <span class="str">\'Python\'</span>],' },
+    { n: 6, html: '&nbsp;&nbsp;<span class="prop">status</span>: <span class="fn">available_for_hire</span>()' },
+    { n: 7, html: '}; <span class="cm">// พร้อมร่วมงาน</span>' },
+  ];
+
+  const gutter = document.getElementById('gutter');
+  const codeEl = document.getElementById('typedCode');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function renderStatic(){
+    gutter.innerHTML = lines.map(l => l.n).join('<br>');
+    codeEl.innerHTML = lines.map(l => l.html).join('<br>');
+  }
+
+  function typeLines(){
+    let out = '';
+    let gutterOut = '';
+    let li = 0;
+
+    function typeLine(){
+      if(li >= lines.length){
+        codeEl.innerHTML = out;
+        return;
+      }
+      gutterOut += (li>0 ? '<br>' : '') + lines[li].n;
+      gutter.innerHTML = gutterOut;
+
+      const full = lines[li].html;
+      // reveal tag-safe: type by splitting on tags, revealing text chars progressively
+      const chunks = full.split(/(<[^>]+>)/g).filter(Boolean);
+      let ci = 0, ti = 0;
+      let lineOut = '';
+
+      function typeChunk(){
+        if(ci >= chunks.length){
+          out += (li>0 ? '<br>' : '') + lineOut;
+          li++;
+          setTimeout(typeLine, 90);
+          return;
+        }
+        const chunk = chunks[ci];
+        if(chunk.startsWith('<')){
+          lineOut += chunk;
+          ci++;
+          typeChunk();
+        } else {
+          if(ti < chunk.length){
+            lineOut += chunk[ti];
+            ti++;
+            codeEl.innerHTML = out + (li>0 ? '<br>' : '') + lineOut + '<span class="caret"></span>';
+            setTimeout(typeChunk, 14);
+          } else {
+            ti = 0;
+            ci++;
+            typeChunk();
+          }
+        }
+      }
+      typeChunk();
+    }
+    typeLine();
+  }
+
+  if(reduceMotion){
+    renderStatic();
+  } else {
+    typeLines();
+  }
+
+  // ---- Active tab on scroll ----
+  const tabs = document.querySelectorAll('.tab');
+  const sections = ['home','about','projects','contact'].map(id => document.getElementById(id));
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        const id = entry.target.id;
+        tabs.forEach(t => t.classList.toggle('active', t.dataset.section === id));
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+
+  sections.forEach(s => s && observer.observe(s));
+
+  // ---- Footer date ----
+  document.getElementById('today').textContent = new Date().toISOString().slice(0,10);
+</script>
+
+</body>
+</html>
